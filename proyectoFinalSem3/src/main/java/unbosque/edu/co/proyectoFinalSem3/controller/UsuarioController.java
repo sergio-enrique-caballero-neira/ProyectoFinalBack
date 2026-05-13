@@ -37,7 +37,7 @@ public class UsuarioController {
     public ResponseEntity<String> crearUsuarioNormal(@RequestParam String nombre, @RequestParam String email, @RequestParam String telefono, @RequestParam String contrasena){
         UsuarioDTO nuevo = new UsuarioDTO(nombre, email, telefono,contrasena);
         usuarioService.create(nuevo);
-        return new ResponseEntity<>("Dato Creado con exito", HttpStatus.CREATED);
+        return new ResponseEntity<>("Usuario registrado exitosamente", HttpStatus.CREATED);
     }
 
 
