@@ -18,14 +18,14 @@ public class UsuarioDTO extends PersonaDTO {
 
 	public UsuarioDTO(List<VirusTotalUploadResponseDTO> historial) {
 		super();
-		this.historial = historial;
+		this.historial = List.copyOf(historial);
 		this.setRole(PersonaDTO.Role.USUARIO);
 	}
 
 	public UsuarioDTO(String nombre, String email, String telefono, String contrasena,
 			List<VirusTotalUploadResponseDTO> historial) {
 		super(nombre, email, telefono, contrasena);
-		this.historial = historial;
+		this.historial = List.copyOf(historial);
 		this.setRole(PersonaDTO.Role.USUARIO);
 	}
 
@@ -39,7 +39,7 @@ public class UsuarioDTO extends PersonaDTO {
 	}
 
 	public void setHistorial(List<VirusTotalUploadResponseDTO> historial) {
-		this.historial = historial;
+		this.historial = List.copyOf(historial);
 	}
 	
 	@Override

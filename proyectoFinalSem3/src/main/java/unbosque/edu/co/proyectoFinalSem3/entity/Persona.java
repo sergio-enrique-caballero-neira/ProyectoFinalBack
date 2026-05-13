@@ -21,11 +21,11 @@ public abstract class Persona implements UserDetails{
     @Enumerated(EnumType.STRING)
 	private Role role;
     
-    public Persona() {
+    protected Persona() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Persona(String nombre, String email, String telefono, String contrasena) {
+    protected Persona(String nombre, String email, String telefono, String contrasena) {
 		super();
 		this.nombre = nombre;
 		this.email = email;

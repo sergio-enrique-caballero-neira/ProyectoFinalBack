@@ -28,14 +28,14 @@ public class Usuario extends Persona {
 
 	public Usuario(List<VirusTotalUploadResponse> historial) {
 		super();
-		this.historial = historial;
+		this.historial = List.copyOf(historial);
 		this.setRole(Persona.Role.USUARIO);
 	}
 
 	public Usuario(String nombre, String email, String telefono, String contrasena,
 			List<VirusTotalUploadResponse> historial) {
 		super(nombre, email, telefono, contrasena);
-		this.historial = historial;
+		this.historial = List.copyOf(historial);
 		this.setRole(Persona.Role.USUARIO);
 	}
 
@@ -50,7 +50,7 @@ public class Usuario extends Persona {
 	}
 
 	public void setHistorial(List<VirusTotalUploadResponse> historial) {
-		this.historial = historial;
+		this.historial = List.copyOf(historial);
 	}
 
 	@Override

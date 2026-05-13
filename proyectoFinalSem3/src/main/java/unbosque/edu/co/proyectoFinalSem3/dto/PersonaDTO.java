@@ -13,11 +13,11 @@ public abstract class PersonaDTO implements UserDetails{
     private String contrasena;
     private Role role;
     
-    public PersonaDTO() {
+    protected PersonaDTO() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public PersonaDTO(String nombre, String email, String telefono, String contrasena) {
+    protected PersonaDTO(String nombre, String email, String telefono, String contrasena) {
 		super();
 		this.nombre = nombre;
 		this.email = email;

@@ -29,7 +29,7 @@ public class Attributes {
 		super();
 		this.status = status;
 		this.stats = stats;
-		this.results = results;
+		this.results = Map.copyOf(results);
 	}
 
 	public String getStatus() {
@@ -53,7 +53,7 @@ public class Attributes {
 	}
 
 	public void setResults(Map<String, EngineResult> results) {
-		this.results = results;
+		this.results = Map.copyOf(results);
 	}
 
 	public long getId_Attributes() {
