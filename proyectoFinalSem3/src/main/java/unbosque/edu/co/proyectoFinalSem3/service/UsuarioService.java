@@ -35,52 +35,7 @@ public class UsuarioService implements CRUDoperation<UsuarioDTO> {
 
 	@Override
 	public int create(UsuarioDTO data) {
-		if (data == null) {
-			throw new BadRequestException("Datos de usuario no proporcionados");
-		}
-
-		if (data.getNombre() == null || data.getNombre().length() < 6 || data.getNombre().length() > 50) {
-			throw new BadRequestException("El nombre debe tener minimo 6 caracteres y maximo 50");
-		}
-
-		if (data.getNombre().contains(" ") || !data.getNombre().matches("^[a-zA-Z0-9]+$")) {
-			throw new BadRequestException("El nombre de usuario no puede contener espacios ni caracteres especiales");
-		}
-
-		if (data.getContrasena() == null || data.getContrasena().trim().isEmpty() || data.getContrasena().length() < 8
-				|| data.getContrasena().length() > 64) {
-			throw new BadRequestException("Contraseña inválida: mínimo 8 y máximo 64 caracteres");
-		}
-
-		if (data.getContrasena() != null && (!data.getContrasena().matches(".*[A-Z].*")
-				|| !data.getContrasena().matches(".*[a-z].*") || !data.getContrasena().matches(".*\\d.*")
-				|| !data.getContrasena().matches(".*[!@#$%^&*()_+\\-={}\\[\\]:;\"'<>?,./].*"))) {
-			throw new BadRequestException(
-					"Contraseña débil: debe incluir mayúsculas, minúsculas, números y carácter especiales");
-		}
-
-		if (data.getEmail() == null || data.getEmail().trim().isEmpty() || data.getEmail().trim().length() > 120) {
-			throw new BadRequestException("Email inválido");
-		}
-
-		if (data.getEmail().contains(" ")) {
-			throw new BadRequestException("El email no puede contener espacios");
-
-		}
-
-		if (data.getEmail() != null
-				&& !data.getEmail().trim().matches("^[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}$")) {
-			throw new BadRequestException("Formato de email inválido");
-		}
-
-		if (data.getTelefono() == null || data.getTelefono().trim().isEmpty()
-				|| !data.getTelefono().trim().matches("^\\d{10}$")) {
-			throw new BadRequestException("Teléfono inválido: solo números, de 10 dígitos");
-		}
-
-		if (data.getTelefono().contains(" ")) {
-			throw new BadRequestException("El telefono no puede contener espacios");
-		}
+		checkData(data);
 
 		existByNombre(data.getNombre());
 		existByEmail(data.getEmail());
@@ -129,10 +84,6 @@ public class UsuarioService implements CRUDoperation<UsuarioDTO> {
 		if (id == null || id <= 0) {
 			throw new BadRequestException("ID inválido");
 		}
-
-		if (data == null) {
-			throw new BadRequestException("Datos de usuario no proporcionados");
-		}
 		
 		Optional<Usuario> encontrado = usuarioRepository.findById(id);
 		
@@ -140,48 +91,7 @@ public class UsuarioService implements CRUDoperation<UsuarioDTO> {
 			throw new ResourceNotFoundException("Usuario no encontrado con id: " + id);
 		}
 
-		if (data.getNombre() == null || data.getNombre().length() < 6 || data.getNombre().length() > 50) {
-			throw new BadRequestException("El nombre debe tener minimo 6 caracteres y maximo 50");
-		}
-
-		if (data.getNombre().contains(" ") || !data.getNombre().matches("^[a-zA-Z0-9]+$")) {
-			throw new BadRequestException("El nombre de usuario no puede contener espacion ni caracteres especiales");
-		}
-
-		if (data.getContrasena() == null || data.getContrasena().trim().isEmpty() || data.getContrasena().length() < 8
-				|| data.getContrasena().length() > 64) {
-			throw new BadRequestException("Contraseña inválida: mínimo 8 y máximo 64 caracteres");
-		}
-
-		if (data.getContrasena() != null && (!data.getContrasena().matches(".*[A-Z].*")
-				|| !data.getContrasena().matches(".*[a-z].*") || !data.getContrasena().matches(".*\\d.*")
-				|| !data.getContrasena().matches(".*[!@#$%^&*()_+\\-={}\\[\\]:;\"'<>?,./].*"))) {
-			throw new BadRequestException(
-					"Contraseña débil: debe incluir mayúsculas, minúsculas, números y carácter especiales");
-		}
-
-		if (data.getEmail() == null || data.getEmail().trim().isEmpty() || data.getEmail().trim().length() > 120) {
-			throw new BadRequestException("Email inválido");
-		}
-
-		if (data.getEmail().contains(" ")) {
-			throw new BadRequestException("El email no puede contener espacios");
-
-		}
-
-		if (data.getEmail() != null
-				&& !data.getEmail().trim().matches("^[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}$")) {
-			throw new BadRequestException("Formato de email inválido");
-		}
-
-		if (data.getTelefono() == null || data.getTelefono().trim().isEmpty()
-				|| !data.getTelefono().trim().matches("^\\d{10}$")) {
-			throw new BadRequestException("Teléfono inválido: solo números, de 10 dígitos");
-		}
-
-		if (data.getTelefono().contains(" ")) {
-			throw new BadRequestException("El telefono no puede contener espacios");
-		}
+		checkData(data);
 
 		UsuarioDTO temp = mapper.map(encontrado.get(), UsuarioDTO.class);
 		temp.setNombre(data.getNombre());
@@ -283,6 +193,54 @@ public class UsuarioService implements CRUDoperation<UsuarioDTO> {
 	
 	public long getIdByUsername(String nombre) {
 		return usuarioRepository.findByNombre(nombre).get().getId();
+	}
+	
+	public boolean checkData(UsuarioDTO data) {
+	    validateNotNull(data);
+	    validateNombre(data.getNombre());
+	    validateContrasena(data.getContrasena());
+	    validateEmail(data.getEmail());
+	    validateTelefono(data.getTelefono());
+	    return true;
+	}
+
+	private void validateNotNull(UsuarioDTO data) {
+	    if (data == null) {
+	        throw new BadRequestException("Datos de usuario no proporcionados");
+	    }
+	}
+
+	private void validateNombre(String nombre) {
+	    if (nombre == null || nombre.length() < 6 || nombre.length() > 50) {
+	        throw new BadRequestException("El nombre debe tener mínimo 6 caracteres y máximo 50");
+	    }
+	    if (!nombre.matches("^[a-zA-Z0-9]{6,50}$")) {
+	        throw new BadRequestException("El nombre de usuario no puede contener espacios ni caracteres especiales");
+	    }
+	}
+
+	private void validateContrasena(String contrasena) {
+	    if (contrasena == null || contrasena.isBlank() || contrasena.length() < 8 || contrasena.length() > 64) {
+	        throw new BadRequestException("Contraseña inválida: mínimo 8 y máximo 64 caracteres");
+	    }
+	    if (!contrasena.matches("^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-={}\\[\\]:;\"'<>?,./]).+$")) {
+	        throw new BadRequestException("Contraseña débil: debe incluir mayúsculas, minúsculas, números y caracteres especiales");
+	    }
+	}
+
+	private void validateEmail(String email) {
+	    if (email == null || email.isBlank() || email.length() > 120) {
+	        throw new BadRequestException("Email inválido");
+	    }
+	    if (!email.trim().matches("^[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}$") || email.contains(" ")) {
+	        throw new BadRequestException("Formato de email inválido");
+	    }
+	}
+
+	private void validateTelefono(String telefono) {
+	    if (telefono == null || telefono.isBlank() || !telefono.trim().matches("^\\d{10}$")) {
+	        throw new BadRequestException("Teléfono inválido: solo números, de 10 dígitos");
+	    }
 	}
 
 }
